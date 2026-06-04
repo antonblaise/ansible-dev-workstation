@@ -1,0 +1,41 @@
+---
+- name: Configure Developer Workstation
+  hosts: local
+
+  tasks:
+    - name: Update apt cache
+      become: yes
+      apt:
+        update_cache: yes
+
+    - name: Install core packages
+      become: yes
+      apt:
+        name:
+          - git
+          - curl
+          - python3
+        state: present
+    
+    - name: Install NodeJS and NPM
+      become: yes
+      apt:
+        name:
+          - nodejs
+          - npm
+        state: present
+    
+    - name: Install Docker
+      become: yes
+      shell: curl -fsSL https://get.docker.com | sh
+      args:
+        creates: /usr/bin/docker
+    
+    - name: Verify Docker installation
+      command: docker --version
+
+    - name: Create Projects Directory
+      file:
+        path: '{{ ansible_env.HOME }}/Projects'
+        state: directory
+        mode: '0755'
