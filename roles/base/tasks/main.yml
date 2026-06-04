@@ -1,0 +1,15 @@
+---
+# tasks file for roles/base
+- name: Update apt cache
+  become: yes
+  apt:
+    update_cache: yes
+
+- name: Install core packages
+  become: yes
+  apt:
+    name:
+      - git
+      - curl
+      - python3
+    state: present

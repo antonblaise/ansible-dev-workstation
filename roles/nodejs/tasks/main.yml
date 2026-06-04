@@ -1,0 +1,9 @@
+---
+# tasks file for roles/nodejs
+- name: Install NodeJS and NPM
+  become: yes
+  apt:
+    name:
+      - nodejs
+      - npm
+    state: present

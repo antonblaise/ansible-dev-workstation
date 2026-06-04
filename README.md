@@ -56,6 +56,36 @@ ansible-playbook -i inventory.ini setup.yml
 
 If it's run again when the YAML file is unchanged, then nothing will be changed. This shows that Ansible tasks and modules are **idempotent**.
 
+## Creating Ansible roles
+
+By definition, a `role` in Ansible is a reusable automation structure, such as tasks, variables, handlers, templates, etc.
+
+```bash
+ansible-galaxy init <parent folder>/<role name>
+```
+
+This command creates a parent folder that contains the folder(s) of the role(s).
+
+* `setup.yml`: orchestration
+* `roles/`: building blocks
+* `inventory`: target machines
+
+Instead of writing all tasks inside one single `setup.yml`, we instead use the `main.yml` file in `<role name>/tasks` to map the tasks to each role. 
+
+Then, in `setup.yml`, we run the tasks assigned to each role by calling the roles. For example:
+
+```yaml
+roles:
+  - base
+  - nodejs
+  - docker
+  - workspace
+```
+
+This runs tasks in `base` role, followed by `nodejs` role, and so on.
+
+In this way, the tasks become reusable. Any other playbook can simply call the role, instead of rewriting the tasks.
+
 ## Ansible ad-hoc command template
 
 We can run ad-hoc Ansible commands for quick admin, troubleshooting and verification.

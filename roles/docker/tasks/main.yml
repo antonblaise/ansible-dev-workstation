@@ -1,0 +1,10 @@
+---
+# tasks file for roles/docker
+- name: Install Docker
+  become: yes
+  shell: curl -fsSL https://get.docker.com | sh
+  args:
+    creates: /usr/bin/docker
+
+- name: Verify Docker installation
+  command: docker --version

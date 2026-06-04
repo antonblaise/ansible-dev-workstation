@@ -1,0 +1,7 @@
+---
+# tasks file for roles/workspace
+- name: Create Projects Directory
+  file:
+    path: "{{ ansible_env.HOME }}/Projects"
+    state: directory
+    mode: '0755'
