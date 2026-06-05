@@ -2,13 +2,15 @@
 
 Ubuntu Developer Workstation Automation with Ansible.
 
-This playbook automates the configuration of a fresh Ubuntu into a developer workstation with these tools:
+The playbook of this project automates the configuration of a fresh Ubuntu into a developer workstation with these tools:
 
 * Git
 * Node.js
 * npm
 * Python 3
 * Docker
+
+Meanwhile, this document records some guidelines on Ansible.
 
 ## Ansible playbook hierarchy
 
@@ -70,7 +72,7 @@ This command creates a parent folder that contains the folder(s) of the role(s).
 * `roles/`: building blocks
 * `inventory`: target machines
 
-Instead of writing all tasks inside one single `setup.yml`, we instead use the `main.yml` file in `<role name>/tasks` to map the tasks to each role. 
+Instead of writing all tasks inside one single `setup.yml`, we instead use the `main.yml` file in `<role name>/tasks` to map the tasks to each role.
 
 Then, in `setup.yml`, we run the tasks assigned to each role by calling the roles. For example:
 
@@ -85,6 +87,51 @@ roles:
 This runs tasks in `base` role, followed by `nodejs` role, and so on.
 
 In this way, the tasks become reusable. Any other playbook can simply call the role, instead of rewriting the tasks.
+
+## Inventory groups
+
+Ansible inventories are usually grouped, so that they are assigned the appropriate roles, to run the relevant tasks.
+
+Example:
+
+```ini
+[webservers]
+web1 ansible_host=192.168.1.10
+web2 ansible_host=192.168.1.11
+
+[dbservers]
+db1 ansible_host=192.168.1.20
+
+[developers]
+localhost ansible_connection=local
+```
+
+In the playbook, we point to a group using `hosts` keyword, and assign toles to the group. Plus, it's also a common practice to use an individual play for each group instead of running all groups in one single play.
+
+```yaml
+---
+- name: Configure Web Servers
+  hosts: webservers
+  become: yes
+
+  roles:
+    - nginx
+    - docker
+
+- name: Configure Database Servers
+  hosts: dbservers
+  become: yes
+
+  roles:
+    - postgresql
+
+- name: Configure Developer Machines
+  hosts: developers
+  become: yes
+
+  roles:
+    - developer_tools
+```
 
 ## Ansible ad-hoc command template
 
